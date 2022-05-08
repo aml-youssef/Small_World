@@ -9,7 +9,7 @@ namespace Small_World
     {
         static Dictionary<string, string> previous = new Dictionary<string, string>();
         static Dictionary<string, int> distance = new Dictionary<string, int>();
-        static Dictionary<string, int> strength = new Dictionary<string, int>();
+        //static Dictionary<string, int> strength = new Dictionary<string, int>();
         Graph graph;
         public Tree(string queries_File, string movies_File)
         {
@@ -23,7 +23,7 @@ namespace Small_World
                 vertces.Clear();
                 previous.Clear();
                 distance.Clear();
-                strength.Clear();
+                //strength.Clear();
                 string[] names = line.Split('/');
                 KeyValuePair<string, string> query = new KeyValuePair<string, string>(names[0], names[1]);
                 Create_BFS_Tree(graph, query.Key);
@@ -48,11 +48,13 @@ namespace Small_World
         public void Create_BFS_Tree(Graph graph, string root)
         {
             Queue<String> queue = new Queue<String>();
+            //PriorityQueue<string, int> queue = new PriorityQueue<string, int>();
+
             List<string> sons = new List<string>();
             queue.Enqueue(root);
             distance[root] = 0;
             previous[root] = null;
-            strength[root] = 0;
+            //strength[root] = 0;
             while (queue.Count != 0) 
             {
                 sons.Clear();
@@ -63,7 +65,7 @@ namespace Small_World
                     {
                         distance[v] = distance[u] + 1;      
                         previous[v] = u;
-                        strength[v] = 1;
+                        //strength[v] = 1;
                         sons.Add(v);
                         queue.Enqueue(v);                   
                     }
@@ -110,7 +112,7 @@ namespace Small_World
                             //distance[v] = distance[u] + 1;
                             previous[v] = u;
                         }*/
-                    }
+                    }*/
 
                 }
             }
