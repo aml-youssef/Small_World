@@ -9,7 +9,9 @@ namespace Small_World
     {
         static void Main(string[] args)
         {
-            Tree tree = new Tree("queries50.txt", "Movies187.txt");
+            //Tree tree = new Tree("queries50.txt", "Movies187.txt");
+            Graph g = new Graph("movies1.txt");
+            
         }
     }
 }

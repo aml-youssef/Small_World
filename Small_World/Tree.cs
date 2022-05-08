@@ -47,172 +47,27 @@ namespace Small_World
         }
         public void Create_BFS_Tree(Graph graph, string root)
         {
-            Queue<String> queue = new Queue<String>();
-            //PriorityQueue<string, int> queue = new PriorityQueue<string, int>();
-
-            List<string> sons = new List<string>();
-            queue.Enqueue(root);
             distance[root] = 0;
             previous[root] = null;
-            //strength[root] = 0;
-            while (queue.Count != 0) 
-            {
-                sons.Clear();
-                string u = queue.Dequeue();
-                foreach (string v in graph.getAdjacent(u))
-                {
-                    if (!distance.ContainsKey(v))
-                    {
-                        distance[v] = distance[u] + 1;      
-                        previous[v] = u;
-                        //strength[v] = 1;
-                        sons.Add(v);
-                        queue.Enqueue(v);                   
-                    }
-                    else if (distance.ContainsKey(v) && !(v.Equals(root)) && !(v.Equals(previous[u]))) 
-                    {
 
-                        if (distance[previous[v]] == distance[u] && strength[previous[v]] < strength[u]) //&& graph.isMove(u) )
-                        {
-                            previous[v] = u;
-                            strength[v] = 1;
-                            distance[v] = distance[u] + 1;
-                            //sons.Add(v);
-                        }
 
-                        if (!(previous[v].Equals(root)))
-                        {
-                            if (previous[previous[v]].Equals(previous[u]))
-                            {
-                                if (graph.isMove(v))
-                                {
-                                    //strength[u]++;
-                                    foreach(string son in sons)
-                                    {
-                                        //if(son != v)
-                                            strength[son]++;
-                                    }
-                                }
-                                else
-                                {
-                                    strength[v]++;
-                                }
-                                //Console.Write("\n" + v + " AlooooooooooooooooooooooooooooWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW \n");
-                                /*if(strength[previous[u]] < strength[v] && distance[previous[u]] == distance[v])
-                                {
-                                    previous[u] = v; 
-                                }*/
-                            }
-                        }
-
-                        
-
-                        /*if (strength[previous[v]] < strength[u] && distance[previous[v]] == distance[u])
-                        {
-                            //distance[v] = distance[u] + 1;
-                            previous[v] = u;
-                        }*/
-                    }*/
-
-                }
-            }
         }
         public int degreeOf_Separation(string vertex)
         {
-            return distance[vertex]/2;
+            return 0;
         }
         public int relation_strenth(string vertex, string root)
         {
-            bool isActor = true;
-            int max = 0;
-            while (vertex != null && distance.ContainsKey(vertex) && !(vertex.Equals(root)))
-            {
-                if (isActor)
-                {
-                    max += strength[vertex];
-                    if (strength[vertex] > 1)
-                    {
-                        //Console.Write("\n" + vertex + " AloooooooooooooooooooooooooooooBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB \n");
-                    }
-                    isActor = false;
-                }
-                else
-                {
-                    isActor = true;
-                }
-
-                vertex = previous[vertex];
-            }
-            return max;
+            return 0;
         }
 
         public Stack<string> chain_of_Movies(string vertex, string root)
         {
-            Stack<string> movies = new Stack<string>();
-            bool isMove = true;
-            while (vertex!=null && distance.ContainsKey(vertex) && vertex != root)
-            {
-                vertex = previous[vertex];
-                if (isMove)
-                {
-                    movies.Push(vertex);
-                    isMove = false;
-                }
-                else
-                {
-                    isMove = true;
-                }
-            }
-            return movies;
+            return new Stack<string>();
         }
         public Stack<string> chain_of_Actors(string vertex, string root)
         {
-            Stack<string> actors = new Stack<string>();
-            bool isActor = true;
-            while (vertex != null && distance.ContainsKey(vertex))
-            {
-                if (isActor)
-                {
-                    actors.Push(vertex);
-                    isActor = false;
-                }
-                else
-                {
-                    isActor = true;
-                }
-                if(vertex.Equals(root))
-                {
-                    break;
-                }
-                vertex = previous[vertex];
-            }
-            return actors;
+            return new Stack<string>();
         }
     }
 }
-
-/*bool isActor = true;
-int max = 0;
-while (vertex != null && distance.ContainsKey(vertex) && !(vertex.Equals(root)))
-{
-    if (isActor)
-    {
-        max += strength[vertex];
-        if (strength[vertex] > 1)
-        {
-            //Console.Write("\n" + vertex + " AloooooooooooooooooooooooooooooBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB \n");
-        }
-        isActor = false;
-    }
-    else
-    {
-        isActor = true;
-    }
-
-    vertex = previous[vertex];
-}
-return max;*/
-
-
-//double result = strength[vertex] / 2;
-//return Math.Ceiling(result);// (/2) not sure

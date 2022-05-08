@@ -5,21 +5,19 @@ using System.Text;
 
 namespace Small_World
 {
-    class node
-    {
-        public int weight = 1;
+    class Edge {
+        public string movieName;
         public bool isVisited = false;
-        public string move;
-        public node(string move)
-        {
-            this.move = move;
+        public Edge(string movie) {
+            this.movieName = movie;
         }
     }
 
     class Graph
     {
-        static Dictionary<string, List<string>> actor_to_actor = new Dictionary<string, List<string>>();//st
-        static Dictionary<Tuple<string, string>, node> edge = new Dictionary<Tuple<string, string>, node>(); 
+        public static Dictionary<string, List<string>> adjacentActors = new Dictionary<string, List<string>>();
+        public static Dictionary<Tuple<string, string>, List<Edge>> edges = new Dictionary<Tuple<string, string>, List<Edge>>();
+        
         public Graph(string fileName)
         {
             FileStream file = new FileStream(fileName, FileMode.Open, FileAccess.Read);
@@ -28,64 +26,43 @@ namespace Small_World
             while ((line = sr.ReadLine()) != null)
             {
                 string[] names = line.Split('/');
-                addEdges_for_a_move(names);
+                initializeEdges(names);
             }
         }
 
-        public void addEdges_for_a_move(string[] v)
+        public void initializeEdges(string[] movieTemp)
         {
-            for (int i = 1; i < v.Length; i++)
+            for (int i = 1; i < movieTemp.Length; i++)
             {
-                for (int j = 1; j < v.Length; j++)
+                for (int j = 1; j < movieTemp.Length; j++)
                 {
                     if (i != j)
                     {
-                        if (!actor_to_actor.ContainsKey(v[i]))
+                        if (!adjacentActors.ContainsKey(movieTemp[i]))
                         {
-                            actor_to_actor[v[i]] = new List<string>();
+                            adjacentActors[movieTemp[i]] = new List<string>();
                         }
-                        actor_to_actor[v[i]].Add(v[j]);
+                        adjacentActors[movieTemp[i]].Add(movieTemp[j]);
 
-
-                        if (edge.ContainsKey(new Tuple<string, string>(v[i], v[j])))
+                        if (!edges.ContainsKey(new Tuple<string, string>(movieTemp[i], movieTemp[j])))
                         {
-                            edge[new Tuple<string, string>(v[i], v[j])].weight++;
+                            edges[new Tuple<string, string>(movieTemp[i], movieTemp[j])] = new List<Edge>();
                         }
-                        edge[new Tuple<string, string>(v[i], v[j])] = new node(v[0]);
+                        edges[new Tuple<string, string>(movieTemp[i], movieTemp[j])].Add(new Edge(movieTemp[0]));
+                        Console.Write(edges[new Tuple<string, string>(movieTemp[i], movieTemp[j])][0].movieName + "\n");
                     }
+                    
                 }
             }
         }
         public List<string> getAdjacent(string vertex)
         {
-            if (actor_to_actor.ContainsKey(vertex))
+            if (adjacentActors.ContainsKey(vertex))
             {
-                return actor_to_actor[vertex];
+                return adjacentActors[vertex];
             }
             else throw new IllegalArgumentException(vertex + " is not a vertex");
         }
         
     }
 }
-
-/*if (!edges.ContainsKey(v1))
-            {
-                edges[v1] = new List<string>();
-            }
-            if (!edges.ContainsKey(v2))
-            {
-                edges[v2] = new List<string>();
-            }
-            edges[v1].Add(v2);
-            edges[v2].Add(v1);
-            isMovie[v1] = true;
-            isMovie[v2] = false;*/
-
-/*public bool isMove(string vertex)
-        {
-            if (isMovie.ContainsKey(vertex))
-            {
-                return isMovie[vertex];
-            }
-            else throw new IllegalArgumentException(vertex + " is not a vertex");
-        }*/
