@@ -11,7 +11,7 @@ namespace Small_World
     {
         static Dictionary<string, string> previous = new Dictionary<string, string>();
         static Dictionary<string, int> distance = new Dictionary<string, int>();
-        //static Dictionary<string, int> strength = new Dictionary<string, int>();
+        static Dictionary<string, int> strength = new Dictionary<string, int>();
         Graph graph;
         public Tree(string queries_File, string movies_File)
         {
@@ -25,13 +25,13 @@ namespace Small_World
                 vertces.Clear();
                 previous.Clear();
                 distance.Clear();
-                //strength.Clear();
+                strength.Clear();
                 string[] names = line.Split('/');
                 KeyValuePair<string, string> query = new KeyValuePair<string, string>(names[0], names[1]);
                 Create_BFS_Tree(graph, query.Key);
                 Console.Write(query.Key + "/" + query.Value + " \n" );
                 Console.Write("DoS = " + degreeOf_Separation(query.Value));
-                Console.Write(",  RS = " + relation_strenth(query.Value, query.Key) + " \n");
+                Console.Write(",  RS = " + relation_strenth(query.Value) + " \n");
                 /*vertces = chain_of_Actors(query.Value, query.Key);
                 Console.Write("CHAIN OF ACTORS: " + vertces.Pop());
                 while (vertces.Count != 0) { 
@@ -51,16 +51,17 @@ namespace Small_World
         {
             Queue<String> nextLevelQueue = new Queue<String>();
             Queue<String> currentQueue = new Queue<String>();
-            Dictionary<string, int> weight = new Dictionary<string, int>();
+            Dictionary<string, int> priorityDictionary = new Dictionary<string, int>();
             currentQueue.Enqueue(root);
             distance[root] = 0;
             previous[root] = null;
+            strength[root] = 0;
 
             while (true)
             {
                 if (currentQueue.Count == 0)
                 {
-                    nextLevelQueue = priorityQueue(weight);
+                    nextLevelQueue = priorityQueue(priorityDictionary);
                     if (nextLevelQueue.Count == 0)
                     {
                         break;
@@ -68,7 +69,7 @@ namespace Small_World
                     else
                     {
                         currentQueue = nextLevelQueue;
-                        weight.Clear();
+                        priorityDictionary.Clear();
                     }
                 }
                 string u = currentQueue.Dequeue();
@@ -78,28 +79,28 @@ namespace Small_World
                     {
                         distance[v] = distance[u] + 1;
                         previous[v] = u;
-                        weight[v] = graph.getVertixWeight(u, v);//Enqueue(v);
-
+                        priorityDictionary[v] = strength[v] = graph.getVertixWeight(u, v) + strength[u];
+                        
                     }
                     else
                     {
-                        if (weight.ContainsKey(v))
+                        if (priorityDictionary.ContainsKey(v))
                         {
-                            if (weight[v] < graph.getVertixWeight(u, v))
+                            if (priorityDictionary[v] < graph.getVertixWeight(u, v) + strength[u])
                             {
                                 distance[v] = distance[u] + 1;
                                 previous[v] = u;
-                                weight[v] = graph.getVertixWeight(u, v);
+                                priorityDictionary[v] = strength[v] = graph.getVertixWeight(u, v) + strength[u];
                             }
                         }
                     }
                 }
             }
         }
-        public Queue<string> priorityQueue(Dictionary<string, int> weight)
+        public Queue<string> priorityQueue(Dictionary<string, int> priorityDictionary)
         {
             Queue<string> sortedQueue = new Queue<string>();
-            var myList = weight.ToList();
+            var myList = priorityDictionary.ToList();
             myList.Sort((pair1, pair2) => pair1.Value.CompareTo(pair2.Value));
             myList.Reverse();
             foreach (var value in myList)
@@ -112,17 +113,10 @@ namespace Small_World
         {
             return distance[vertex];
         }
-        public int relation_strenth(string destination, string root)
+        public int relation_strenth(string destination)
         {
-            int weightSum = 0;
-            string alo;
-            while (destination != root)
-            {
-                alo = previous[destination];
-                weightSum += graph.getVertixWeight(alo, destination);
-                destination = previous[destination];
-            }
-            return weightSum;
+            
+            return strength[destination];
         }
         public Stack<string> chain_of_Movies(string vertex, string root)
         {
@@ -135,3 +129,11 @@ namespace Small_World
         }
     }
 }
+/*int weightSum = 0;
+            string alo;
+            while (destination != root)
+            {
+                alo = previous[destination];
+                weightSum += graph.getVertixWeight(alo, destination);
+                destination = previous[destination];
+            }*/
