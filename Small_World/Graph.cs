@@ -15,8 +15,8 @@ namespace Small_World
 
     class Graph
     {
-        public static Dictionary<string, List<string>> adjacentActors = new Dictionary<string, List<string>>();
-        public static Dictionary<Tuple<string, string>, List<Edge>> edges = new Dictionary<Tuple<string, string>, List<Edge>>();
+        static Dictionary<string, List<string>> adjacentActors = new Dictionary<string, List<string>>();
+        static Dictionary<Tuple<string, string>, List<Edge>> edges = new Dictionary<Tuple<string, string>, List<Edge>>();
         
         public Graph(string fileName)
         {
@@ -30,7 +30,7 @@ namespace Small_World
             }
         }
 
-        public void initializeEdges(string[] movieTemp)
+        void initializeEdges(string[] movieTemp)
         {
             for (int i = 1; i < movieTemp.Length; i++)
             {
@@ -49,9 +49,8 @@ namespace Small_World
                             edges[new Tuple<string, string>(movieTemp[i], movieTemp[j])] = new List<Edge>();
                         }
                         edges[new Tuple<string, string>(movieTemp[i], movieTemp[j])].Add(new Edge(movieTemp[0]));
-                        Console.Write(edges[new Tuple<string, string>(movieTemp[i], movieTemp[j])][0].movieName + "\n");
+                        //Console.Write(edges[new Tuple<string, string>(movieTemp[i], movieTemp[j])][0].movieName + "\n");
                     }
-                    
                 }
             }
         }
@@ -63,6 +62,14 @@ namespace Small_World
             }
             else throw new IllegalArgumentException(vertex + " is not a vertex");
         }
-        
+        public int getVertixWeight(string source, string destination)
+        {
+            if(edges.ContainsKey(new Tuple<string, string>(source, destination)))
+            {
+                return edges[new Tuple<string, string>(source, destination)].Count;
+            }
+            else throw new IllegalArgumentException(source + " and " + destination + " is not a vertices");
+        }
+
     }
 }

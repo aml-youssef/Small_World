@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using System.Linq;
+
 
 namespace Small_World
 {
@@ -30,7 +32,7 @@ namespace Small_World
                 Console.Write(query.Key + "/" + query.Value + " \n" );
                 Console.Write("DoS = " + degreeOf_Separation(query.Value));
                 Console.Write(",  RS = " + relation_strenth(query.Value, query.Key) + " \n");
-                vertces = chain_of_Actors(query.Value, query.Key);
+                /*vertces = chain_of_Actors(query.Value, query.Key);
                 Console.Write("CHAIN OF ACTORS: " + vertces.Pop());
                 while (vertces.Count != 0) { 
                     Console.Write(" -> " + vertces.Pop());
@@ -41,32 +43,94 @@ namespace Small_World
                 {
                     Console.Write(vertces.Pop() + " => ");
                 }
-                Console.Write("\n");
+                Console.Write("\n");*/
                 Console.Write("\n");
             }
         }
         public void Create_BFS_Tree(Graph graph, string root)
         {
+            Queue<String> nextLevelQueue = new Queue<String>();
+            Queue<String> currentQueue = new Queue<String>();
+            Dictionary<string, int> weight = new Dictionary<string, int>();
+            currentQueue.Enqueue(root);
             distance[root] = 0;
             previous[root] = null;
 
+            while (true)
+            {
+                if (currentQueue.Count == 0)
+                {
+                    nextLevelQueue = priorityQueue(weight);
+                    if (nextLevelQueue.Count == 0)
+                    {
+                        break;
+                    }
+                    else
+                    {
+                        currentQueue = nextLevelQueue;
+                        weight.Clear();
+                    }
+                }
+                string u = currentQueue.Dequeue();
+                foreach (string v in graph.getAdjacent(u))
+                {
+                    if (!distance.ContainsKey(v))
+                    {
+                        distance[v] = distance[u] + 1;
+                        previous[v] = u;
+                        weight[v] = graph.getVertixWeight(u, v);//Enqueue(v);
 
+                    }
+                    else
+                    {
+                        if (weight.ContainsKey(v))
+                        {
+                            if (weight[v] < graph.getVertixWeight(u, v))
+                            {
+                                distance[v] = distance[u] + 1;
+                                previous[v] = u;
+                                weight[v] = graph.getVertixWeight(u, v);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        public Queue<string> priorityQueue(Dictionary<string, int> weight)
+        {
+            Queue<string> sortedQueue = new Queue<string>();
+            var myList = weight.ToList();
+            myList.Sort((pair1, pair2) => pair1.Value.CompareTo(pair2.Value));
+            myList.Reverse();
+            foreach (var value in myList)
+            {
+                sortedQueue.Enqueue(value.Key);
+            }
+            return sortedQueue;
         }
         public int degreeOf_Separation(string vertex)
         {
-            return 0;
+            return distance[vertex];
         }
-        public int relation_strenth(string vertex, string root)
+        public int relation_strenth(string destination, string root)
         {
-            return 0;
+            int weightSum = 0;
+            string alo;
+            while (destination != root)
+            {
+                alo = previous[destination];
+                weightSum += graph.getVertixWeight(alo, destination);
+                destination = previous[destination];
+            }
+            return weightSum;
         }
-
         public Stack<string> chain_of_Movies(string vertex, string root)
         {
             return new Stack<string>();
         }
         public Stack<string> chain_of_Actors(string vertex, string root)
         {
+
             return new Stack<string>();
         }
     }
