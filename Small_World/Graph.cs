@@ -5,18 +5,10 @@ using System.Text;
 
 namespace Small_World
 {
-    class Edge {
-        public string movieName;
-        public bool isVisited = false;
-        public Edge(string movie) {
-            this.movieName = movie;
-        }
-    }
-
     class Graph
     {
         static Dictionary<string, List<string>> adjacentActors = new Dictionary<string, List<string>>();
-        static Dictionary<Tuple<string, string>, List<Edge>> edges = new Dictionary<Tuple<string, string>, List<Edge>>();
+        static Dictionary<Tuple<string, string>, List<string>> edges = new Dictionary<Tuple<string, string>, List<string>>();
         
         public Graph(string fileName)
         {
@@ -46,10 +38,9 @@ namespace Small_World
 
                         if (!edges.ContainsKey(new Tuple<string, string>(movieTemp[i], movieTemp[j])))
                         {
-                            edges[new Tuple<string, string>(movieTemp[i], movieTemp[j])] = new List<Edge>();
+                            edges[new Tuple<string, string>(movieTemp[i], movieTemp[j])] = new List<string>();
                         }
-                        edges[new Tuple<string, string>(movieTemp[i], movieTemp[j])].Add(new Edge(movieTemp[0]));
-                        //Console.Write(edges[new Tuple<string, string>(movieTemp[i], movieTemp[j])][0].movieName + "\n");
+                        edges[new Tuple<string, string>(movieTemp[i], movieTemp[j])].Add(movieTemp[0]);
                     }
                 }
             }

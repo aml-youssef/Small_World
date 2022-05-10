@@ -28,7 +28,7 @@ namespace Small_World
                 strength.Clear();
                 string[] names = line.Split('/');
                 KeyValuePair<string, string> query = new KeyValuePair<string, string>(names[0], names[1]);
-                Create_BFS_Tree(graph, query.Key);
+                Create_BFS_Tree(graph, query.Key, query.Value);
                 Console.Write(query.Key + "/" + query.Value + " \n" );
                 Console.Write("DoS = " + degreeOf_Separation(query.Value));
                 Console.Write(",  RS = " + relation_strenth(query.Value) + " \n");
@@ -47,11 +47,12 @@ namespace Small_World
                 Console.Write("\n");
             }
         }
-        public void Create_BFS_Tree(Graph graph, string root)
+        public void Create_BFS_Tree(Graph graph, string root, string destination)
         {
             Queue<String> nextLevelQueue = new Queue<String>();
             Queue<String> currentQueue = new Queue<String>();
             Dictionary<string, int> priorityDictionary = new Dictionary<string, int>();
+            bool isDestinationFound = false;
             currentQueue.Enqueue(root);
             distance[root] = 0;
             previous[root] = null;
@@ -62,7 +63,7 @@ namespace Small_World
                 if (currentQueue.Count == 0)
                 {
                     nextLevelQueue = priorityQueue(priorityDictionary);
-                    if (nextLevelQueue.Count == 0)
+                    if (nextLevelQueue.Count == 0 || isDestinationFound)
                     {
                         break;
                     }
@@ -75,6 +76,10 @@ namespace Small_World
                 string u = currentQueue.Dequeue();
                 foreach (string v in graph.getAdjacent(u))
                 {
+                    if (v == destination)
+                    {
+                        isDestinationFound = true;
+                    }
                     if (!distance.ContainsKey(v))
                     {
                         distance[v] = distance[u] + 1;
@@ -129,11 +134,3 @@ namespace Small_World
         }
     }
 }
-/*int weightSum = 0;
-            string alo;
-            while (destination != root)
-            {
-                alo = previous[destination];
-                weightSum += graph.getVertixWeight(alo, destination);
-                destination = previous[destination];
-            }*/
