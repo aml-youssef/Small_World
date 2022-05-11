@@ -2,13 +2,15 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using System.Linq;
+
 
 namespace Small_World
 {
     class Graph
     {
         static Dictionary<string, List<string>> adjacentActors = new Dictionary<string, List<string>>();
-        static Dictionary<Tuple<string, string>, List<string>> edges = new Dictionary<Tuple<string, string>, List<string>>();
+        static Dictionary<string, List<string>> movesActors = new Dictionary<string, List<string>>();
         
         public Graph(string fileName)
         {
@@ -18,52 +20,37 @@ namespace Small_World
             Console.Write("start \n");
             while ((line = sr.ReadLine()) != null)
             {
-                string[] names = line.Split('/');
+                List<string> names = new List<string>(line.Split('/'));
                 initializeEdges(names);
             }
         }
 
-        void initializeEdges(string[] movieTemp)
+        void initializeEdges(List<string> movieTemp)
         {
-            for (int i = 1; i < movieTemp.Length; i++)
+            string movieName = movieTemp[0];
+            movieTemp.RemoveAt(0);
+            for (int i = 0; i < movieTemp.Count; i++)
             {
-                for (int j = 1; j < movieTemp.Length; j++)
+                if (!adjacentActors.ContainsKey(movieTemp[i]))
                 {
-                    if (i != j)
-                    {
-                        if (!adjacentActors.ContainsKey(movieTemp[i]))
-                        {
-                            adjacentActors[movieTemp[i]] = new List<string>();
-                        }
-                        adjacentActors[movieTemp[i]].Add(movieTemp[j]);
-
-                        if (!edges.ContainsKey(new Tuple<string, string>(movieTemp[i], movieTemp[j])))
-                        {
-                            edges[new Tuple<string, string>(movieTemp[i], movieTemp[j])] = new List<string>();
-                        }
-                        edges[new Tuple<string, string>(movieTemp[i], movieTemp[j])].Add(movieTemp[0]);
-                    }
+                    adjacentActors[movieTemp[i]] = new List<string>();
                 }
+                adjacentActors[movieTemp[i]] = adjacentActors[movieTemp[i]].Union(movieTemp).ToList();//exclude the duplicate
+                if (!movesActors.ContainsKey(movieTemp[i]))
+                {
+                    movesActors[movieTemp[i]] = new List<string>();
+                }
+                movesActors[movieTemp[i]].Add(movieName);
+                    
             }
         }
         public List<string> getAdjacent(string vertex)
         {
-            if (adjacentActors.ContainsKey(vertex))
-            {
-                return adjacentActors[vertex];
-            }
-            else throw new IllegalArgumentException(vertex + " is not a vertex");
+            return adjacentActors[vertex];
         }
         public int getAdjacentWeight(string source, string destination)
         {
-            if(edges.ContainsKey(new Tuple<string, string>(source, destination)))
-            {
-                return edges[new Tuple<string, string>(source, destination)].Count;
-            }
-            else throw new IllegalArgumentException(source + " and " + destination + " is not a vertices");
+            return movesActors[source].Intersect(movesActors[destination]).ToList().Count;
         }
-
-
-
     }
 }
