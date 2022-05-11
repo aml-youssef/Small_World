@@ -28,7 +28,7 @@ namespace Small_World
                 strength.Clear();
                 string[] names = line.Split('/');
                 KeyValuePair<string, string> query = new KeyValuePair<string, string>(names[0], names[1]);
-                Create_BFS_Tree(graph, query.Key, query.Value);
+                initializeBFSTree(graph, query.Key, query.Value);
                 Console.Write(query.Key + "/" + query.Value + " \n" );
                 Console.Write("DoS = " + degreeOf_Separation(query.Value));
                 Console.Write(",  RS = " + relation_strenth(query.Value) + " \n");
@@ -47,7 +47,7 @@ namespace Small_World
                 Console.Write("\n");
             }
         }
-        public void Create_BFS_Tree(Graph graph, string root, string destination)
+        public void initializeBFSTree(Graph graph, string root, string destination)
         {
             Queue<String> nextLevelQueue = new Queue<String>();
             Queue<String> currentQueue = new Queue<String>();
@@ -76,6 +76,10 @@ namespace Small_World
                 string u = currentQueue.Dequeue();
                 foreach (string v in graph.getAdjacent(u))
                 {
+                    if (u == v)
+                    {
+                        continue;
+                    }
                     if (v == destination && !isDestinationFound)
                     {
                         isDestinationFound = true;
@@ -84,18 +88,18 @@ namespace Small_World
                     {
                         distance[v] = distance[u] + 1;
                         previous[v] = u;
-                        priorityDictionary[v] = strength[v] = graph.getVertixWeight(u, v) + strength[u];
+                        priorityDictionary[v] = strength[v] = graph.getAdjacentWeight(u, v) + strength[u];
                         
                     }
                     else
                     {
                         if (priorityDictionary.ContainsKey(v))
                         {
-                            if (priorityDictionary[v] < graph.getVertixWeight(u, v) + strength[u])
+                            if (priorityDictionary[v] < graph.getAdjacentWeight(u, v) + strength[u])
                             {
                                 distance[v] = distance[u] + 1;
                                 previous[v] = u;
-                                priorityDictionary[v] = strength[v] = graph.getVertixWeight(u, v) + strength[u];
+                                priorityDictionary[v] = strength[v] = graph.getAdjacentWeight(u, v) + strength[u];
                             }
                         }
                     }
@@ -104,14 +108,9 @@ namespace Small_World
         }
         public Queue<string> priorityQueue(Dictionary<string, int> priorityDictionary)
         {
-            Queue<string> sortedQueue = new Queue<string>();
             var myList = priorityDictionary.ToList();
-            myList.Sort((pair1, pair2) => pair1.Value.CompareTo(pair2.Value));
-            myList.Reverse();
-            foreach (var value in myList)
-            {
-                sortedQueue.Enqueue(value.Key);
-            }
+            myList.OrderByDescending((pair1 => pair1.Value)).ToList();
+            Queue<string> sortedQueue = new Queue<string>(priorityDictionary.Keys);
             return sortedQueue;
         }
         public int degreeOf_Separation(string vertex)

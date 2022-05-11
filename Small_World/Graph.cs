@@ -15,6 +15,7 @@ namespace Small_World
             FileStream file = new FileStream(fileName, FileMode.Open, FileAccess.Read);
             StreamReader sr = new StreamReader(file);
             string line;
+            Console.Write("start \n");
             while ((line = sr.ReadLine()) != null)
             {
                 string[] names = line.Split('/');
@@ -53,7 +54,7 @@ namespace Small_World
             }
             else throw new IllegalArgumentException(vertex + " is not a vertex");
         }
-        public int getVertixWeight(string source, string destination)
+        public int getAdjacentWeight(string source, string destination)
         {
             if(edges.ContainsKey(new Tuple<string, string>(source, destination)))
             {
@@ -61,6 +62,8 @@ namespace Small_World
             }
             else throw new IllegalArgumentException(source + " and " + destination + " is not a vertices");
         }
+
+
 
     }
 }
