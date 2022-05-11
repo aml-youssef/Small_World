@@ -76,7 +76,7 @@ namespace Small_World
                 string u = currentQueue.Dequeue();
                 foreach (string v in graph.getAdjacent(u))
                 {
-                    if (v == destination)
+                    if (v == destination && !isDestinationFound)
                     {
                         isDestinationFound = true;
                     }
@@ -120,7 +120,6 @@ namespace Small_World
         }
         public int relation_strenth(string destination)
         {
-            
             return strength[destination];
         }
         public Stack<string> chain_of_Movies(string vertex, string root)
@@ -129,7 +128,6 @@ namespace Small_World
         }
         public Stack<string> chain_of_Actors(string vertex, string root)
         {
-
             return new Stack<string>();
         }
     }
