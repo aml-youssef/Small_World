@@ -10,7 +10,7 @@ namespace Small_World
     class Graph
     {
         static Dictionary<string, List<string>> adjacentActors = new Dictionary<string, List<string>>();
-        static Dictionary<string, List<string>> movesActors = new Dictionary<string, List<string>>();
+        public static Dictionary<string, List<string>> actorMovies = new Dictionary<string, List<string>>();
         
         public Graph(string fileName)
         {
@@ -36,11 +36,11 @@ namespace Small_World
                     adjacentActors[movieTemp[i]] = new List<string>();
                 }
                 adjacentActors[movieTemp[i]] = adjacentActors[movieTemp[i]].Union(movieTemp).ToList();//exclude the duplicate
-                if (!movesActors.ContainsKey(movieTemp[i]))
+                if (!actorMovies.ContainsKey(movieTemp[i]))
                 {
-                    movesActors[movieTemp[i]] = new List<string>();
+                    actorMovies[movieTemp[i]] = new List<string>();
                 }
-                movesActors[movieTemp[i]].Add(movieName);
+                actorMovies[movieTemp[i]].Add(movieName);
                     
             }
         }
@@ -50,7 +50,12 @@ namespace Small_World
         }
         public int getAdjacentWeight(string source, string destination)
         {
-            return movesActors[source].Intersect(movesActors[destination]).ToList().Count;
+            return actorMovies[source].Intersect(actorMovies[destination]).ToList().Count;
+        }
+
+        public string getCommonMovie(string source, string destination)
+        {
+            return actorMovies[source].Intersect(actorMovies[destination]).ToList()[0];
         }
     }
 }

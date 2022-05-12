@@ -12,6 +12,7 @@ namespace Small_World
         static Dictionary<string, string> previous = new Dictionary<string, string>();
         static Dictionary<string, int> distance = new Dictionary<string, int>();
         static Dictionary<string, int> strength = new Dictionary<string, int>();
+        List<int> degreeFrequency = new List<int>();
         Graph graph;
         public Tree(string queries_File, string movies_File)
         {
@@ -26,31 +27,41 @@ namespace Small_World
                 previous.Clear();
                 distance.Clear();
                 strength.Clear();
+                degreeFrequency.Clear();
+
                 string[] names = line.Split('/');
                 KeyValuePair<string, string> query = new KeyValuePair<string, string>(names[0], names[1]);
                 initializeBFSTree(graph, query.Key, query.Value);
                 Console.Write(query.Key + "/" + query.Value + " \n" );
                 Console.Write("DoS = " + degreeOf_Separation(query.Value));
                 Console.Write(",  RS = " + relation_strenth(query.Value) + " \n");
-                /*vertces = chain_of_Actors(query.Value, query.Key);
+                vertces = actorsChain(query.Value, query.Key);
                 Console.Write("CHAIN OF ACTORS: " + vertces.Pop());
                 while (vertces.Count != 0) { 
                     Console.Write(" -> " + vertces.Pop());
                 }
-                vertces = chain_of_Movies(query.Value, query.Key);
+                
+                vertces = moviesChain(query.Value, query.Key);
                 Console.Write("\nCHAIN OF MOVIES: => ");
                 while (vertces.Count != 0)
                 {
                     Console.Write(vertces.Pop() + " => ");
                 }
-                Console.Write("\n");*/
                 Console.Write("\n");
+                /*for(int i = 0; i <degreeFrequency.Count; i++)
+                {
+                    Console.WriteLine(i + " - " + degreeFrequency[i]);
+                } --- BONUS */
+                Console.Write("\n");
+                
             }
         }
         public void initializeBFSTree(Graph graph, string root, string destination)
         {
             Queue<String> nextLevelQueue = new Queue<String>();
             Queue<String> currentQueue = new Queue<String>();
+            
+            degreeFrequency.Add(1);
             Dictionary<string, int> priorityDictionary = new Dictionary<string, int>();
             bool isDestinationFound = false;
             currentQueue.Enqueue(root);
@@ -69,6 +80,7 @@ namespace Small_World
                     }
                     else
                     {
+                        degreeFrequency.Add(nextLevelQueue.Count());
                         currentQueue = nextLevelQueue;
                         priorityDictionary.Clear();
                     }
@@ -80,7 +92,7 @@ namespace Small_World
                     {
                         continue;
                     }
-                    if (v == destination && !isDestinationFound)
+                    if (v == destination && !isDestinationFound) // REMOVE FOR BONUS
                     {
                         isDestinationFound = true;
                     }
@@ -121,13 +133,27 @@ namespace Small_World
         {
             return strength[destination];
         }
-        public Stack<string> chain_of_Movies(string vertex, string root)
+        public Stack<string> moviesChain(string destination, string root)
         {
-            return new Stack<string>();
+            Stack<string> stack = new Stack<string>();
+            string current = destination;
+            while(previous[current] != null)
+            {
+                stack.Push(graph.getCommonMovie(previous[current], current));
+                current = previous[current];
+            }
+            return stack;
         }
-        public Stack<string> chain_of_Actors(string vertex, string root)
+        public Stack<string> actorsChain(string destination, string root)
         {
-            return new Stack<string>();
+            Stack<string> stack = new Stack<string>();
+            stack.Push(destination);
+            string current = destination;
+            while(previous[current] != null) {
+                stack.Push(previous[current]);
+                current = previous[current];
+            }
+            return stack;
         }
     }
 }
