@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections;
 using System.IO;
 using System.Text;
 using System.Linq;
@@ -16,7 +17,6 @@ namespace Small_World
         Graph graph;
         public Tree(string queries_File, string movies_File, bool isOptimized)
         {
-            
             graph = new Graph(movies_File);
             Stack<string> vertces = new Stack<string>();
             FileStream file = new FileStream(queries_File, FileMode.Open, FileAccess.Read);
