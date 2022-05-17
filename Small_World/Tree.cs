@@ -14,8 +14,9 @@ namespace Small_World
         static Dictionary<string, int> strength = new Dictionary<string, int>();
         List<int> degreeFrequency = new List<int>();
         Graph graph;
-        public Tree(string queries_File, string movies_File)
+        public Tree(string queries_File, string movies_File, bool isOptimized)
         {
+            
             graph = new Graph(movies_File);
             Stack<string> vertces = new Stack<string>();
             FileStream file = new FileStream(queries_File, FileMode.Open, FileAccess.Read);
@@ -31,7 +32,7 @@ namespace Small_World
 
                 string[] names = line.Split('/');
                 KeyValuePair<string, string> query = new KeyValuePair<string, string>(names[0], names[1]);
-                initializeBFSTree(graph, query.Key, query.Value);
+                initializeBFSTree(graph, query.Key, query.Value, isOptimized);
                 Console.Write(query.Key + "/" + query.Value + " \n" );
                 Console.Write("DoS = " + degreeOf_Separation(query.Value));
                 Console.Write(",  RS = " + relation_strenth(query.Value) + " \n");
@@ -48,15 +49,18 @@ namespace Small_World
                     Console.Write(vertces.Pop() + " => ");
                 }
                 Console.Write("\n");
-                /*for(int i = 0; i <degreeFrequency.Count; i++)
+                if (!isOptimized)
                 {
-                    Console.WriteLine(i + " - " + degreeFrequency[i]);
-                } --- BONUS */
+                    for(int i = 0; i <degreeFrequency.Count; i++)
+                    {
+                        Console.WriteLine(i + " - " + degreeFrequency[i]);
+                    } 
+                }
                 Console.Write("\n");
                 
             }
         }
-        public void initializeBFSTree(Graph graph, string root, string destination)
+        public void initializeBFSTree(Graph graph, string root, string destination, bool isOptimized)
         {
             Queue<String> nextLevelQueue = new Queue<String>();
             Queue<String> currentQueue = new Queue<String>();
@@ -92,7 +96,7 @@ namespace Small_World
                     {
                         continue;
                     }
-                    if (v == destination && !isDestinationFound) // REMOVE FOR BONUS
+                    if (v == destination && !isDestinationFound && isOptimized) // REMOVE FOR BONUS
                     {
                         isDestinationFound = true;
                     }
