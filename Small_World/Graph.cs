@@ -9,12 +9,9 @@ namespace Small_World
 {
     class Graph
     {
-        static Dictionary<string, int> actorsId = new Dictionary<string, int>();
-        static List<List<int>> adjacentActors = new List<List<int>>();
-        public static List<List<string>> actorMovies = new List<List<string>>();
-        static List<string> actorNames = new List<string>();
-        static int actorCount = 0;
-
+        static Dictionary<string, List<string>> adjacentActors = new Dictionary<string, List<string>>();
+        public static Dictionary<string, List<string>> actorMovies = new Dictionary<string, List<string>>();
+        
         public Graph(string fileName)
         {
             FileStream file = new FileStream(fileName, FileMode.Open, FileAccess.Read);
@@ -30,28 +27,23 @@ namespace Small_World
 
         void initializeEdges(List<string> movieTemp)
         {
-
             string movieName = movieTemp[0];
             movieTemp.RemoveAt(0);
             for (int i = 0; i < movieTemp.Count; i++)
-            {   
-                if(!actorsId.ContainsKey(movieTemp[i]))
+            {
+                if (!adjacentActors.ContainsKey(movieTemp[i]))
                 {
-                    actorsId.Add(movieTemp[i], actorCount);
-                    adjacentActors[actorCount] = new List<int>();
-                    actorMovies[actorCount] = new List<string>();
-                    actorCount++;
+                    adjacentActors[movieTemp[i]] = new List<string>();
                 }
-
-                adjacentActors[actorsId[movieTemp[i]] = adjacentActors[actorsId[movieTemp[i]];
-
-                /*
-                adjacentActors[actorsId[movieTemp[i]] = adjacentActors[actorsId[movieTemp[i]].Union(movieTemp).ToList(); //exclude the duplicate
+                adjacentActors[movieTemp[i]] = adjacentActors[movieTemp[i]].Union(movieTemp).ToList();//exclude the duplicate
+                if (!actorMovies.ContainsKey(movieTemp[i]))
+                {
+                    actorMovies[movieTemp[i]] = new List<string>();
+                }
                 actorMovies[movieTemp[i]].Add(movieName);
-              */
+                    
             }
         }
-
         public List<string> getAdjacent(string vertex)
         {
             return adjacentActors[vertex];
