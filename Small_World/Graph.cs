@@ -9,9 +9,15 @@ namespace Small_World
 {
     class Graph
     {
-        static Dictionary<string, List<string>> adjacentActors = new Dictionary<string, List<string>>();
-        public static Dictionary<string, List<string>> actorMovies = new Dictionary<string, List<string>>();
-        
+        public Dictionary<string, int> actorsId = new Dictionary<string, int>();
+        public Dictionary<string, int> movieId = new Dictionary<string, int>();
+        List<List<int>> adjacentActors = new List<List<int>>();
+        public static List<List<int>> actorMovies = new List<List<int>>();
+        List<string> actorNames = new List<string>();
+        List<string> moviesNames = new List<string>();
+        public int actorCount = 0;
+        public int movieCount = 0;
+
         public Graph(string fileName)
         {
             FileStream file = new FileStream(fileName, FileMode.Open, FileAccess.Read);
@@ -29,33 +35,95 @@ namespace Small_World
         {
             string movieName = movieTemp[0];
             movieTemp.RemoveAt(0);
+            movieId[movieName] = movieCount;
+            moviesNames.Add(movieName);
+            movieCount++;
+            for (int i = 0; i < movieTemp.Count; i++)
+            {   
+                if(!actorsId.ContainsKey(movieTemp[i]))
+                {
+                    actorsId.Add(movieTemp[i], actorCount);
+                    actorNames.Add(movieTemp[i]);
+                    adjacentActors.Add(new List<int>());
+                    actorMovies.Add(new List<int>());
+                    actorCount++;
+                }                
+            }
             for (int i = 0; i < movieTemp.Count; i++)
             {
-                if (!adjacentActors.ContainsKey(movieTemp[i]))
+                for (int j = 0; j < movieTemp.Count; j++)
                 {
-                    adjacentActors[movieTemp[i]] = new List<string>();
+                    if (i != j)
+                    {
+                        adjacentActors[actorsId[movieTemp[i]]].Add(actorsId[movieTemp[j]]);
+                    }
                 }
-                adjacentActors[movieTemp[i]] = adjacentActors[movieTemp[i]].Union(movieTemp).ToList();//exclude the duplicate
-                if (!actorMovies.ContainsKey(movieTemp[i]))
-                {
-                    actorMovies[movieTemp[i]] = new List<string>();
-                }
-                actorMovies[movieTemp[i]].Add(movieName);
-                    
+                actorMovies[actorsId[movieTemp[i]]].Add(movieCount-1);
             }
+
         }
-        public List<string> getAdjacent(string vertex)
+        public int getActorID(string actorName)
         {
-            return adjacentActors[vertex];
+            return actorsId[actorName];
         }
-        public int getAdjacentWeight(string source, string destination)
+        public string getActorName(int actorID)
         {
-            return actorMovies[source].Intersect(actorMovies[destination]).ToList().Count;
+            return actorNames[actorID];
         }
 
-        public string getCommonMovie(string source, string destination)
+        public List<int> getAdjacent(int vertex)
         {
-            return actorMovies[source].Intersect(actorMovies[destination]).ToList()[0];
+            return adjacentActors[vertex]; 
         }
+        public string getCommonMovie(int source, int destination)
+        {
+            int fIter = 0;
+            int sIter = 0;
+            var result = new List<int>();
+            while (fIter < actorMovies[source].Count && sIter < actorMovies[destination].Count)
+            {
+                if (actorMovies[source][fIter] < actorMovies[destination][sIter])
+                {
+                    fIter++;
+                }
+                else if (actorMovies[source][fIter] > actorMovies[destination][sIter])
+                {
+                    sIter++;
+                }
+                else
+                {
+                    result.Add(actorMovies[source][fIter]);
+                    fIter++;
+                    sIter++;
+                }
+            }
+            return moviesNames[result[0]];
+        }
+
+        public int getAdjacentWeight(int source, int destination)//get intersection between 2 lists
+        {
+            int fIter = 0;
+            int sIter = 0;
+            var result = new List<int>();
+            while (fIter < actorMovies[source].Count && sIter < actorMovies[destination].Count)
+            {
+                if (actorMovies[source][fIter] < actorMovies[destination][sIter])
+                {
+                    fIter++;
+                }
+                else if (actorMovies[source][fIter] > actorMovies[destination][sIter])
+                {
+                    sIter++;
+                }
+                else
+                {
+                    result.Add(actorMovies[source][fIter]);
+                    fIter++;
+                    sIter++;
+                }
+            }
+            return result.Count;           
+        }        
+
     }
 }
