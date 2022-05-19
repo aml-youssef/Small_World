@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
@@ -9,60 +9,53 @@ namespace Small_World
 {
     class Graph
     {
-        static Dictionary<string, int> actorsId = new Dictionary<string, int>();//O(1)
-        static List<List<int>> adjacentActors = new List<List<int>>();//O(1)
-        public static List<List<string>> actorMovies = new List<List<string>>();//O(1)
-        static List<string> actorNames = new List<string>();//O(1)
-        static int actorCount = 0;//O(1)
-
-        public Graph(string fileName)//O(N^2)
+        static Dictionary<string, List<string>> adjacentActors = new Dictionary<string, List<string>>();
+        public static Dictionary<string, List<string>> actorMovies = new Dictionary<string, List<string>>();
+        
+        public Graph(string fileName)
         {
-            FileStream file = new FileStream(fileName, FileMode.Open, FileAccess.Read);//O(1)
-            StreamReader sr = new StreamReader(file);//O(1)
-            string line;//O(1)
+            FileStream file = new FileStream(fileName, FileMode.Open, FileAccess.Read);
+            StreamReader sr = new StreamReader(file);
+            string line;
             Console.Write("start \n");
-            while ((line = sr.ReadLine()) != null)//O(N)
+            while ((line = sr.ReadLine()) != null)
             {
-                List<string> names = new List<string>(line.Split('/'));//O(1)
-                initializeEdges(names);//O(N)
+                List<string> names = new List<string>(line.Split('/'));
+                initializeEdges(names);
             }
         }
 
         void initializeEdges(List<string> movieTemp)
         {
-
-            string movieName = movieTemp[0]; //O(1)
-            movieTemp.RemoveAt(0);//O(1)
-            for (int i = 0; i < movieTemp.Count; i++)//O(1)
-            {   
-                if(!actorsId.ContainsKey(movieTemp[i]))//O(1)
+            string movieName = movieTemp[0];
+            movieTemp.RemoveAt(0);
+            for (int i = 0; i < movieTemp.Count; i++)
+            {
+                if (!adjacentActors.ContainsKey(movieTemp[i]))
                 {
-                    actorsId.Add(movieTemp[i], actorCount);//O(1)
-                    adjacentActors[actorCount] = new List<int>();//O(1)
-                    actorMovies[actorCount] = new List<string>();//O(1)
-                    actorCount++;//O(1)
+                    adjacentActors[movieTemp[i]] = new List<string>();
                 }
-
-                adjacentActors[actorsId[movieTemp[i]] = adjacentActors[actorsId[movieTemp[i]];//O(1)
-
-                /*
-                adjacentActors[actorsId[movieTemp[i]] = adjacentActors[actorsId[movieTemp[i]].Union(movieTemp).ToList(); //exclude the duplicate
+                adjacentActors[movieTemp[i]] = adjacentActors[movieTemp[i]].Union(movieTemp).ToList();//exclude the duplicate
+                if (!actorMovies.ContainsKey(movieTemp[i]))
+                {
+                    actorMovies[movieTemp[i]] = new List<string>();
+                }
                 actorMovies[movieTemp[i]].Add(movieName);
-              */
+                    
             }
         }
         public List<string> getAdjacent(string vertex)
         {
-            return adjacentActors[vertex];//O(1)
+            return adjacentActors[vertex];
         }
         public int getAdjacentWeight(string source, string destination)
         {
-            return actorMovies[source].Intersect(actorMovies[destination]).ToList().Count; //O(N^2)
+            return actorMovies[source].Intersect(actorMovies[destination]).ToList().Count;
         }
 
         public string getCommonMovie(string source, string destination)
         {
-            return actorMovies[source].Intersect(actorMovies[destination]).ToList()[0];//O(N^2)
+            return actorMovies[source].Intersect(actorMovies[destination]).ToList()[0];
         }
     }
 }
