@@ -159,7 +159,7 @@ namespace Small_World
         {
             Stack<string> stack = new Stack<string>();
             int current = destination;
-            while(current != root)
+            while(previous[current] != root)
             {
                 stack.Push(graph.getCommonMovie(previous[current], current));
                 current = previous[current];
