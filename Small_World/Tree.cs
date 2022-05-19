@@ -10,10 +10,10 @@ namespace Small_World
 {
     class Tree
     {
-        static Dictionary<string, string> previous = new Dictionary<string, string>();
-        static Dictionary<string, int> distance = new Dictionary<string, int>();
-        static Dictionary<string, int> strength = new Dictionary<string, int>();
-        List<int> degreeFrequency = new List<int>();
+        static Dictionary<string, string> previous = new Dictionary<string, string>();//O(1)
+        static Dictionary<string, int> distance = new Dictionary<string, int>();//O(1)
+        static Dictionary<string, int> strength = new Dictionary<string, int>();//O(1)
+        List<int> degreeFrequency = new List<int>();//O(1)
         Graph graph;
         public Tree(string queries_File, string movies_File, bool isOptimized)
         {
