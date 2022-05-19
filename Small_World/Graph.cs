@@ -97,7 +97,8 @@ namespace Small_World
                     sIter++;
                 }
             }
-            return moviesNames[result[0]];
+            var temp = result[0];
+            return moviesNames[temp];
         }
 
         public int getAdjacentWeight(int source, int destination)//get intersection between 2 lists//O(N)
