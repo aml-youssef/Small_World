@@ -10,7 +10,7 @@ namespace Small_World
     {
         static void Main(string[] args)
         {
-            while (true)
+            while (true)//O(N)
             {
                 Console.WriteLine("0. Non optimized run (including bonus)\n" +
                     "1. Optimized Run");
