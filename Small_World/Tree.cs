@@ -37,28 +37,29 @@ namespace Small_World
                 }
                 string[] names = line.Split('/');//O(N)
                 KeyValuePair<int, int> query = new KeyValuePair<int, int>(graph.getActorID(names[0]), graph.getActorID(names[1]));//O(1)
-                initializeBFSTree(graph, query.Key, query.Value, isOptimized);
+                initializeBFSTree(graph, query.Key, query.Value, isOptimized);//O(N^3)
                 Console.Write(names[0] + "/" + names[1] + " \n" );
                 Console.Write("DoS = " + degreeOf_Separation(query.Value));
                 Console.Write(",  RS = " + relation_strenth(query.Value) + " \n");
                 if(!isOptimized) { 
-                vertices = actorsChain(query.Value, query.Key);
-                Console.Write("CHAIN OF ACTORS: " + vertices.Pop());
+                vertices = actorsChain(query.Value, query.Key);//O(N)
+                    Console.Write("CHAIN OF ACTORS: " + vertices.Pop());
                 }
-                while (vertices.Count != 0) { 
+                while (vertices.Count != 0) //O(N)
+                { 
                     Console.Write(" -> " + vertices.Pop());
                 }
                 
                 vertices = moviesChain(query.Value, query.Key);
                 Console.Write("\nCHAIN OF MOVIES: => ");
-                while (vertices.Count != 0)
+                while (vertices.Count != 0)//O(N)
                 {
                     Console.Write(vertices.Pop() + " => ");
                 }
                 Console.Write("\n");
                 if (!isOptimized)
                 {
-                    for(int i = 0; i <degreeFrequency.Count; i++)
+                    for(int i = 0; i <degreeFrequency.Count; i++)//O(N)
                     {
                         Console.WriteLine(i + " - " + degreeFrequency[i]);
                     } 
@@ -67,7 +68,7 @@ namespace Small_World
                 
             }
         }
-        public void initializeBFSTree(Graph graph, int root, int destination, bool isOptimized)
+        public void initializeBFSTree(Graph graph, int root, int destination, bool isOptimized)//O(N^3)
         {
             Queue<int> nextLevelQueue = new Queue<int>();//O(1)
             Queue<int> currentQueue = new Queue<int>();
