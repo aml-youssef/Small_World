@@ -51,7 +51,6 @@ namespace Small_World
               */
             }
         }
-
         public List<string> getAdjacent(string vertex)
         {
             return adjacentActors[vertex];//O(1)
