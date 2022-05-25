@@ -12,24 +12,25 @@ namespace Small_World
     {
         Graph graph;
         static List<int> previous = new List<int>();//O(1)
-        static List<int> distance = new List<int>();
-        static List<int> strength = new List<int>();
-        List<int> degreeFrequency = new List<int>();
-        public Tree(string queries_File, string movies_File, bool isOptimized)//O(N^4)
+        static List<int> distance = new List<int>();//O(1)
+        static List<int> strength = new List<int>();//O(1)
+        List<int> degreeFrequency = new List<int>();//O(1)
+        public Tree(string queries_File, string movies_File, bool isOptimized)//O(N^3)+O(V^2) xxxx
         {
-            graph = new Graph(movies_File);//O(1)
+            graph = new Graph(movies_File);//O(N^3)
             Stack<string> vertices = new Stack<string>();//O(1)
             FileStream file = new FileStream(queries_File, FileMode.Open, FileAccess.Read);//O(1)
             StreamReader sr = new StreamReader(file);//O(1)
             string line;
-            while ((line = sr.ReadLine()) != null) //O(N^4)
+            while ((line = sr.ReadLine()) != null) //O(N^3)+O(V^2) xxxx
             {
-                vertices.Clear();
-                previous.Clear();
-                distance.Clear();
-                strength.Clear();
-                degreeFrequency.Clear();
-                for (int i = 0; i < graph.actorsId.Count; i++)//O(N)
+                vertices.Clear();//O(N)
+                previous.Clear();//O(N)
+                distance.Clear();//O(N)
+                strength.Clear();//O(N)
+                degreeFrequency.Clear();//O(N)
+                //Intialize
+                for (int i = 0; i < graph.actorsId.Count; i++)//O(V)
                 {
                     previous.Add(-1);
                     distance.Add(0);
@@ -37,7 +38,7 @@ namespace Small_World
                 }
                 string[] names = line.Split('/');//O(N)
                 KeyValuePair<int, int> query = new KeyValuePair<int, int>(graph.getActorID(names[0]), graph.getActorID(names[1]));//O(1)
-                initializeBFSTree(graph, query.Key, query.Value, isOptimized);//O(N^3)
+                initializeBFSTree(graph, query.Key, query.Value, isOptimized);//O(NlogN)+O(V^2)
                 Console.Write(names[0] + "/" + names[1] + " \n" );
                 Console.Write("DoS = " + degreeOf_Separation(query.Value));
                 Console.Write(",  RS = " + relation_strenth(query.Value) + " \n");
@@ -68,24 +69,24 @@ namespace Small_World
                 
             }
         }
-        public void initializeBFSTree(Graph graph, int root, int destination, bool isOptimized)//O(N^3)
+        public void initializeBFSTree(Graph graph, int root, int destination, bool isOptimized)//O(NlogN)+O(V^2) 
         {
             Queue<int> nextLevelQueue = new Queue<int>();//O(1)
             Queue<int> currentQueue = new Queue<int>();
             
-            degreeFrequency.Add(1);
-            Dictionary<int, int> priorityDictionary = new Dictionary<int, int>();
+            degreeFrequency.Add(1);//O(1)
+            Dictionary<int, int> priorityDictionary = new Dictionary<int, int>();//O(1)
             bool isDestinationFound = false;
             currentQueue.Enqueue(root);//O(1)
             distance[root] = 0;
             previous[root] = -2;
             strength[root] = 0;
 
-            while (true)//O(N^3)
+            while (true)//O(NlogN)+O(V^2)
             {
-                if (currentQueue.Count == 0)
+                if (currentQueue.Count == 0)//O(NlogN)
                 {
-                    nextLevelQueue = priorityQueue(priorityDictionary);//O(N)
+                    nextLevelQueue = priorityQueue(priorityDictionary);//O(NlogN)
                     if (nextLevelQueue.Count == 0 || isDestinationFound)
                     {
                         break;
@@ -94,21 +95,19 @@ namespace Small_World
                     {
                         degreeFrequency.Add(nextLevelQueue.Count());
                         currentQueue = nextLevelQueue;
-                        priorityDictionary.Clear();//O(1)
+                        priorityDictionary.Clear();//O(N)
                     }
                 }
                 int u = currentQueue.Dequeue();//O(1)
-                foreach (int v in graph.getAdjacent(u))//O(N^2)
+                foreach (int v in graph.getAdjacent(u))//O(V)----->(adj(u))
+
                 {
-                    if (u == v)//O(1)
-                    {
-                        continue;
-                    }
-                    if (v == destination && !isDestinationFound && isOptimized) // REMOVE FOR BONUS //O(1)
+                   
+                    if (v == destination && !isDestinationFound && isOptimized)  //O(1)
                     {
                         isDestinationFound = true;
                     }
-                    if (distance[v] == 0)//if()!distance.Contains(v) //O(1)
+                    if (distance[v] == 0) //O(N)
                     {
                         distance[v] = distance[u] + 1;
                         previous[v] = u;
@@ -116,24 +115,25 @@ namespace Small_World
                     }
                     else
                     {
-                        if (priorityDictionary.ContainsKey(v))
+                        if (priorityDictionary.ContainsKey(v))//O(N)
                         {
-                            if (priorityDictionary[v] < graph.getAdjacentWeight(u, v) + strength[u])//O(N)
+                            int weight = graph.getAdjacentWeight(u, v);//O(N)
+                            if (priorityDictionary[v] < weight + strength[u])//O(1)
                             {
                                 distance[v] = distance[u] + 1;
                                 previous[v] = u;
-                                priorityDictionary[v] = strength[v] = graph.getAdjacentWeight(u, v) + strength[u];//O(N)
+                                priorityDictionary[v] = strength[v] = weight + strength[u];//O(1)
                             }
                         }
                     }
                 }
             }
         }
-        public Queue<int> priorityQueue(Dictionary<int, int> priorityDictionary)//O(N)
+        public Queue<int> priorityQueue(Dictionary<int, int> priorityDictionary)//O(N*logN) 
         {
             var myList = priorityDictionary.ToList();//O(N)
-            myList.OrderByDescending((pair1 => pair1.Value)).ToList();//O(N)
-            Queue<int> sortedQueue = new Queue<int>(priorityDictionary.Keys);
+            myList.OrderByDescending((pair1 => pair1.Value)).ToList();//O(N*logN) 
+            Queue<int> sortedQueue = new Queue<int>(priorityDictionary.Keys);//O(N)
             return sortedQueue;
         }
         public int degreeOf_Separation(int vertex)//O(1)
@@ -144,14 +144,14 @@ namespace Small_World
         {
             return strength[destination];
         }
-        public Stack<string> actorsChain(int destination, int root)//O(N)
+        public Stack<string> actorsChain(int destination, int root)//O(N)------>T(#levs)
         {
             Stack<string> stack = new Stack<string>();
             int current = destination;
             stack.Push(graph.getActorName(destination));
             while (current != root)//O(N)
             {
-                stack.Push(graph.getActorName(previous[current]));
+                stack.Push(graph.getActorName(previous[current]));//O(1) 
                 current = previous[current];
             }
             return stack;

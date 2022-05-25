@@ -10,28 +10,28 @@ namespace Small_World
     class Graph
     {
         public Dictionary<string, int> actorsId = new Dictionary<string, int>();//O(1)
-        public Dictionary<string, int> movieId = new Dictionary<string, int>();
-        List<List<int>> adjacentActors = new List<List<int>>();
-        public static List<List<int>> actorMovies = new List<List<int>>();
+        public Dictionary<string, int> movieId = new Dictionary<string, int>();//O(1)
+        List<List<int>> adjacentActors = new List<List<int>>();//O(1)
+        public static List<List<int>> actorMovies = new List<List<int>>();//O(1)
         List<string> actorNames = new List<string>();//O(1)
-        List<string> moviesNames = new List<string>();
-        public int actorCount = 0;
-        public int movieCount = 0;
+        List<string> moviesNames = new List<string>();//O(1)
+        public int actorCount = 0;//O(1)
+        public int movieCount = 0;//O(1)
 
-        public Graph(string fileName)//O(N^3)
+        public Graph(string fileName)//O(N^3) xx
         {
-            FileStream file = new FileStream(fileName, FileMode.Open, FileAccess.Read);
-            StreamReader sr = new StreamReader(file);
+            FileStream file = new FileStream(fileName, FileMode.Open, FileAccess.Read);//O(1)
+            StreamReader sr = new StreamReader(file);//O(1)
             string line;
             Console.Write("start \n");
-            while ((line = sr.ReadLine()) != null)//O(N^3)
+            while ((line = sr.ReadLine()) != null)//O(N^3) 
             {
                 List<string> names = new List<string>(line.Split('/'));//O(N)
                 initializeEdges(names);//O(N^2)
             }
         }
 
-        void initializeEdges(List<string> movieTemp)//O(N^2)
+        void initializeEdges(List<string> movieTemp)//O(N^2) 
         {
             string movieName = movieTemp[0];
             movieTemp.RemoveAt(0);//O(1)
@@ -42,23 +42,23 @@ namespace Small_World
             {   
                 if(!actorsId.ContainsKey(movieTemp[i]))//O(1)
                 {
-                    actorsId.Add(movieTemp[i], actorCount);
-                    actorNames.Add(movieTemp[i]);
-                    adjacentActors.Add(new List<int>());
-                    actorMovies.Add(new List<int>());
+                    actorsId.Add(movieTemp[i], actorCount);//O(1)
+                    actorNames.Add(movieTemp[i]);//O(1)
+                    adjacentActors.Add(new List<int>());//O(1)
+                    actorMovies.Add(new List<int>());//O(1)
                     actorCount++;
                 }                
             }
             for (int i = 0; i < movieTemp.Count; i++)//O(N^2)
             {
-                for (int j = 0; j < movieTemp.Count; j++)
+                for (int j = 0; j < movieTemp.Count; j++)//O(N)
                 {
                     if (i != j)
                     {
-                        adjacentActors[actorsId[movieTemp[i]]].Add(actorsId[movieTemp[j]]);
+                        adjacentActors[actorsId[movieTemp[i]]].Add(actorsId[movieTemp[j]]);//O(1)
                     }
                 }
-                actorMovies[actorsId[movieTemp[i]]].Add(movieCount-1);
+                actorMovies[actorsId[movieTemp[i]]].Add(movieCount-1);//O(1)
             }
 
         }
@@ -77,50 +77,52 @@ namespace Small_World
         }
         public string getCommonMovie(int source, int destination)//O(N)
         {
-            int fIter = 0;
-            int sIter = 0;
-            var result = new List<int>();
-            while (fIter < actorMovies[source].Count && sIter < actorMovies[destination].Count)//O(N)
+           
+            List<int> result = new List<int>();
+            int first = 0;
+            int second = 0;
+            while (first < actorMovies[source].Count && second < actorMovies[destination].Count)//O(N)
             {
-                if (actorMovies[source][fIter] < actorMovies[destination][sIter])//O(1)
+                if (actorMovies[source][first] > actorMovies[destination][second])//O(1)
                 {
-                    fIter++;
+                    second++; 
                 }
-                else if (actorMovies[source][fIter] > actorMovies[destination][sIter])//O(1)
+                else if (actorMovies[source][first] < actorMovies[destination][second])//O(1)
                 {
-                    sIter++;
+                    first++;
                 }
                 else //O(1)
                 {
-                    result.Add(actorMovies[source][fIter]);
-                    fIter++;
-                    sIter++;
+                    result.Add(actorMovies[source][first]);
+                    first++;
+                    second++;
                 }
             }
-            var temp = result[0];
+            int temp = result[0];
             return moviesNames[temp];
         }
 
-        public int getAdjacentWeight(int source, int destination)//get intersection between 2 lists//O(N)
+        public int getAdjacentWeight(int source, int destination)//get intersection between 2 lists//O(N) -------------> T(d+s)
         {
-            int fIter = 0;
-            int sIter = 0;
-            var result = new List<int>();
-            while (fIter < actorMovies[source].Count && sIter < actorMovies[destination].Count)//O(N)
+            
+            List<int> result = new List<int>();
+            int first = 0;
+            int second = 0;
+            while (first < actorMovies[source].Count && second < actorMovies[destination].Count)//O(N) -------------> T(d+s)
             {
-                if (actorMovies[source][fIter] < actorMovies[destination][sIter])//O(1)
+                if (actorMovies[source][first] > actorMovies[destination][second])//O(1)
                 {
-                    fIter++;
+                    second++;
                 }
-                else if (actorMovies[source][fIter] > actorMovies[destination][sIter])//O(1)
+                else if (actorMovies[source][first] < actorMovies[destination][second])//O(1)
                 {
-                    sIter++;
+                    first++;
                 }
                 else //O(1)
                 {
-                    result.Add(actorMovies[source][fIter]);
-                    fIter++;
-                    sIter++;
+                    result.Add(actorMovies[source][first]);
+                    first++;
+                    second++;
                 }
             }
             return result.Count;           
