@@ -15,14 +15,14 @@ namespace Small_World
         static List<int> distance = new List<int>();
         static List<int> strength = new List<int>();
         List<int> degreeFrequency = new List<int>();
-        public Tree(string queries_File, string movies_File, bool isOptimized)
+        public Tree(string queries_File, string movies_File, bool isOptimized)//O(N^4)
         {
             graph = new Graph(movies_File);//O(1)
             Stack<string> vertices = new Stack<string>();//O(1)
             FileStream file = new FileStream(queries_File, FileMode.Open, FileAccess.Read);//O(1)
             StreamReader sr = new StreamReader(file);//O(1)
             string line;
-            while ((line = sr.ReadLine()) != null) //O(N)
+            while ((line = sr.ReadLine()) != null) //O(N^4)
             {
                 vertices.Clear();
                 previous.Clear();
@@ -50,7 +50,7 @@ namespace Small_World
                     Console.Write(" -> " + vertices.Pop());
                 }
                 
-                vertices = moviesChain(query.Value, query.Key);
+                vertices = moviesChain(query.Value, query.Key);//O(N^2)
                 Console.Write("\nCHAIN OF MOVIES: => ");
                 while (vertices.Count != 0)//O(N)
                 {
