@@ -11,9 +11,9 @@ namespace Small_World
     class Tree
     {
         Graph graph;
-        static List<int> previous = new List<int>();//O(1)
-        static List<int> distance = new List<int>();//O(1)
-        static List<int> strength = new List<int>();//O(1)
+        List<int> previous = new List<int>();//O(1)
+        List<int> distance = new List<int>();//O(1)
+        List<int> strength = new List<int>();//O(1)
         List<int> degreeFrequency = new List<int>();//O(1)
         public Tree(string queries_File, string movies_File, bool isOptimized)//O(N^3)+O(V^2) xxxx
         {
